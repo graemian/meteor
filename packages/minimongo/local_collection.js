@@ -41,6 +41,9 @@ export default class LocalCollection {
 
     // True when observers are paused and we should not send callbacks.
     this.paused = false;
+
+      this.dataModQueue = Promise.resolve();
+
   }
 
   countDocuments(selector, options) {
@@ -536,9 +539,40 @@ export default class LocalCollection {
     return result;
   }
 
+  async queueDataMod(func) {
+
+    this.dataModQueue = this.dataModQueue.then(async () => {
+
+      try {
+
+        return await func();
+
+      } catch (error) {
+
+        console.error("Error in queued data mod:", error);
+
+      }
+    });
+
+    return this.dataModQueue;
+
+  }
+
+
+  async updateAsync(selector, mod, options, callback) {
+
+    return this.queueDataMod(
+
+      async () => await this.updateAsyncUnsafe(selector, mod, options, callback)
+
+    );
+
+  }
+
   // XXX atomicity: if multi is true, and one modification fails, do
   // we rollback the whole operation, or what?
-  async updateAsync(selector, mod, options, callback) {
+  async updateAsyncUnsafe(selector, mod, options, callback) {
+
     if (! callback && options instanceof Function) {
       callback = options;
       options = null;
