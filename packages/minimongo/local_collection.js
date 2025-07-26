@@ -173,7 +173,18 @@ export default class LocalCollection {
 
     return id;
   }
+
   async insertAsync(doc, callback) {
+
+    return this.queueDataMod(
+
+      async () => await this.insertAsyncUnsafe(doc, callback)
+
+    );
+
+  }
+
+  async insertAsyncUnsafe(doc, callback) {
     doc = EJSON.clone(doc);
     const id = this.prepareInsert(doc);
     const queriesToRecompute = [];
