@@ -179,7 +179,7 @@ export default class LocalCollection {
     for (const qid of Object.keys(this.queries)) {
       const query = this.queries[qid];
 
-      if (query.dirty) {
+      if (! query || query.dirty) {
         continue;
       }
 
@@ -830,7 +830,7 @@ export default class LocalCollection {
     for (const qid of Object.keys(this.queries)) {
       const query = this.queries[qid];
 
-      if (query.dirty) {
+      if (! query || query.dirty) {
         continue;
       }
 
