@@ -350,7 +350,7 @@ export default class Cursor {
       collection: this.collection,
       stop: () => {
         if (this.reactive) {
-          delete this.collection.queries[qid];
+          this.collection.queueDataMod(() => delete this.collection.queries[qid]);
         }
       },
       isReady: false,
